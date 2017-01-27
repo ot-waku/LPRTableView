@@ -8,13 +8,13 @@
 
 import UIKit
 
-public class LPRTableViewController: UITableViewController {
+open class LPRTableViewController: UITableViewController {
     /// Returns the long press to reorder table view managed by the controller object.
-    public var longPressReorderTableView: LPRTableView {
+    open var longPressReorderTableView: LPRTableView {
         return tableView as! LPRTableView
     }
     
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         initialize()
     }
@@ -28,7 +28,7 @@ public class LPRTableViewController: UITableViewController {
         super.init(coder: aDecoder)
     }
     
-    public override func awakeFromNib() {
+    open override func awakeFromNib() {
         super.awakeFromNib()
         initialize()
     }
@@ -45,14 +45,14 @@ public class LPRTableViewController: UITableViewController {
 }
 
 extension LPRTableViewController: LPRTableViewDelegate {
-    public func tableView(tableView: UITableView, draggingCell cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, draggingCell cell: UITableViewCell, atIndexPath indexPath: IndexPath) -> UITableViewCell {
         return cell
     }
-    public func tableView(tableView: UITableView, willAppearDraggingView view: UIView, atIndexPath indexPath: NSIndexPath) {
+    open func tableView(_ tableView: UITableView, willAppearDraggingView view: UIView, atIndexPath indexPath: IndexPath) {
     }
-    public func tableView(tableView: UITableView, willDisappearDraggingView view: UIView, atIndexPath indexPath: NSIndexPath) {
+    open func tableView(_ tableView: UITableView, willDisappearDraggingView view: UIView, atIndexPath indexPath: IndexPath) {
     }
-    public func tableView(tableView: UITableView, shouldMoveRowAtIndexPath: NSIndexPath, forGestureRecognizer gestureRecognizer: UILongPressGestureRecognizer) -> Bool {
+    open func tableView(_ tableView: UITableView, shouldMoveRowAtIndexPath: IndexPath, forGestureRecognizer gestureRecognizer: UILongPressGestureRecognizer) -> Bool {
         return true
     }
 }

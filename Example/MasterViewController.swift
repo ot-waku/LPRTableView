@@ -13,13 +13,13 @@ private let cellIdentifier = "Cell"
 
 final class MasterViewController: LPRTableViewController {
     
-    private var objects = [NSDate]()
+    private var objects = [Date]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.leftBarButtonItem = editButtonItem()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+        navigationItem.leftBarButtonItem = editButtonItem
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(MasterViewController.insertNewObject(_:)))
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,21 +27,21 @@ final class MasterViewController: LPRTableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func insertNewObject(sender: UIBarButtonItem) {
-        objects.insert(NSDate(), atIndex: 0)
-        let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-        tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+    func insertNewObject(_ sender: UIBarButtonItem) {
+        objects.insert(Date(), at: 0)
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.insertRows(at: [indexPath], with: .automatic)
     }
 
 
     // MARK: - Table view data source
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
 
         let object = objects[indexPath.row]
         cell.textLabel?.text = object.description
@@ -52,29 +52,29 @@ final class MasterViewController: LPRTableViewController {
     }
     
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
-        case .Delete:
-            objects.removeAtIndex(indexPath.row)
+        case .delete:
+            objects.remove(at: indexPath.row)
         default:
             break
         }
     }
     
     // MARK: - Segues
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "show":
             if let indexPath = tableView.indexPathForSelectedRow {
                 let object = objects[indexPath.row]
-                guard let destinationViewController = segue.destinationViewController as? DetailViewController else {
+                guard let destinationViewController = segue.destination as? DetailViewController else {
                     return
                 }
-                destinationViewController.detailItem = object
+                destinationViewController.detailItem = object as AnyObject?
             }
         default:
             break
@@ -84,8 +84,8 @@ final class MasterViewController: LPRTableViewController {
     // MARK: - Long Press Reorder
     
     // Important: Update your data source after the user reorders a cell.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
-        objects.insert(objects.removeAtIndex(sourceIndexPath.row), atIndex: destinationIndexPath.row)
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        objects.insert(objects.remove(at: sourceIndexPath.row), at: destinationIndexPath.row)
     }
     
     /*
@@ -93,33 +93,33 @@ final class MasterViewController: LPRTableViewController {
     
     NOTE: Any changes made here should be reverted in `tableView:cellForRowAtIndexPath:` to avoid accidentally reusing the modifications.
     */
-    override func tableView(tableView: UITableView, draggingCell cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, draggingCell cell: UITableViewCell, atIndexPath indexPath: IndexPath) -> UITableViewCell {
         return cell
     }
     
     /*
     Optional: Called within an animation block when the dragging view is about to show.
     */
-    override func tableView(tableView: UITableView, willAppearDraggingView view: UIView, atIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willAppearDraggingView view: UIView, atIndexPath indexPath: IndexPath) {
         print("The dragged cell is about to be animated!")
     }
     
     /*
     Optional: Called within an animation block when the dragging view is about to hide.
     */
-    override func tableView(tableView: UITableView, willDisappearDraggingView view: UIView, atIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisappearDraggingView view: UIView, atIndexPath indexPath: IndexPath) {
         print("The dragged cell is about to be dropped.")
     }
     
     /*
     Optional: Return false for invalid region on cell.
     */
-    override func tableView(tableView: UITableView, shouldMoveRowAtIndexPath: NSIndexPath, forGestureRecognizer gestureRecognizer: UILongPressGestureRecognizer) -> Bool {
-        let locationInView = gestureRecognizer.locationInView(tableView)
-        guard let indexPath = tableView.indexPathForRowAtPoint(locationInView), cell = tableView.cellForRowAtIndexPath(indexPath) else {
+    override func tableView(_ tableView: UITableView, shouldMoveRowAtIndexPath: IndexPath, forGestureRecognizer gestureRecognizer: UILongPressGestureRecognizer) -> Bool {
+        let locationInView = gestureRecognizer.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: locationInView), let cell = tableView.cellForRow(at: indexPath) else {
             return false
         }
-        let locationInCell = gestureRecognizer.locationInView(cell)
+        let locationInCell = gestureRecognizer.location(in: cell)
         return locationInCell.x <= (cell.frame.width / 2)
     }
 }
